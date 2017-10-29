@@ -221,6 +221,24 @@ def sending_asset(Asset_symbol,Asset_Issuer,desAdd,amount):
     return response
 
 
+def Trusting_asset(assetName,issuerAdd,limit):
+    data = Get_data()
+    
+    sourceAdd = data['Address']
+    asset = asset_Identifier(assetName,issuerAdd)
+    
+    sequence2 = horizon.account(sourceAdd).get('sequence')
+    op_ct = ChangeTrust({'asset':asset, 'limit':str(limit)})
+    tx_ct = Transaction(source=sourceAdd, opts = {'sequence':sequence2, 'operations':[op_ct,]})
+    envelope_ct = Te(tx=tx_ct, opts={"network_id": "PUBLIC"})
+    kp = Keypair.from_seed(Trezor_Access())
+    envelope_ct.sign(kp)                 #sign
+    xdr2 = envelope_ct.xdr()
+    response=horizon.submit(xdr2)           #submit
+    passed_or_not(response)
+    return response
+
+
     
     
 
